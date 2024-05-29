@@ -1,14 +1,41 @@
-const mongoose=require('mongoose')
+const mongoose = require("mongoose");
 
-const UserSchema= new mongoose.Schema({
-    name:String,
-    email:String,
-    password:String,
-    role:{
-        type: String,
-        default: "user"
-    }
-})
+// Define the schema for a user
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  userName: {
+    type: String,
+    required: true,
+    trim: true,
+    unique: true, // Make userName unique
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true, // Make email unique
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  age: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+  weight: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+});
 
-const UserModel = mongoose.model("users", UserSchema)
-module.exports= UserModel
+// Create a model from the schema and specify the collection name
+const User = mongoose.model("User", userSchema, "users");
+
+module.exports = User;
