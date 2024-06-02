@@ -1,0 +1,56 @@
+
+.generate-plan-container {
+  max-width: 500px;
+  margin: 0 auto;
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+/* Heading styles */
+.generate-plan-heading {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Form styles */
+.generate-plan-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.generate-plan-form label {
+  margin-bottom: 10px;
+}
+
+.generate-plan-form input,
+.generate-plan-form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.generate-plan-form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.generate-plan-form button:hover {
+  background-color: #0056b3;
+}
+
+/* Error message styles */
+.error-message {
+  color: red;
+  margin-top: 5px;
+}
