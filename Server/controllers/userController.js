@@ -8,7 +8,6 @@ exports.getUserProfile = (req, res) => {
       if (user) {
         res.json({
           name: user.name,
-          userName: user.userName, // Ensure username is included
           email: user.email,
           age: user.age, // Ensure age is included
           weight: user.weight, // Ensure weight is included
