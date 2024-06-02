@@ -3,12 +3,12 @@ const jwt = require("jsonwebtoken");
 const UserModel = require("../models/Users");
 
 exports.register = (req, res) => {
-  const { name, userName, email, password, age, weight } = req.body;
+  const { name, email, password, age, weight } = req.body;
 
   bcrypt
     .hash(password, 10)
     .then((hash) => {
-      UserModel.create({ name, userName, email, password: hash, age, weight })
+      UserModel.create({ name, email, password: hash, age, weight })
         .then(() => {
           res.json({ status: "OK" });
         })

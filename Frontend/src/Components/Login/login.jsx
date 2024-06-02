@@ -3,203 +3,225 @@ import './login.css';
 import { useState } from 'react';
 import axios from 'axios';
 import { GoogleLogin } from '@react-oauth/google';
-import { EyeFill } from 'react-bootstrap-icons';
-import { EyeSlashFill } from 'react-bootstrap-icons';
+import { EyeFill, EyeSlashFill } from 'react-bootstrap-icons';
 import {jwtDecode} from "jwt-decode";
 import Sidebar from '../Sidebar/SideBar';
-export default function Login(){
-    const navigate=useNavigate();
-    const [name,setName]=useState();
-    const [age,setAge]=useState();
-    const [weight,setWeight]=useState();
-    const [userName,setuserName]=useState();
-    const [email,setEmail]=useState();
-    const [password,setPassword]=useState();
-    const [confirmPassword,setConfirmPassword]=useState();
+
+export default function Login() {
+    const navigate = useNavigate();
+    const [name, setName] = useState('');
+    const [age, setAge] = useState('');
+    const [weight, setWeight] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [isToggled, setIsToggled] = useState(false);
-    const [showPassword,setShowPassword]=useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
-    
 
-    const handleSignUp = (e) => {
-      e.preventDefault();
-  
-      if (password !== confirmPassword) {
-        setError("Passwords do not match");
-        return;
-      }
-  
-      axios
-        .post("https://ded-lift.onrender.com/register", {
-          name,
-          userName,
-          password,
-          age,
-          weight,
-        })
-        .then((res) => {
-          console.log(res.data);  // Optional: log the response to see what's coming back
-          setMessage("Registration successful");
-          setError('');
-        })
-        .catch((err) => {
-          console.log(err);
-          setError("Registration failed. Please try again.");
-        });
+    const handleSignUp = async (e) => {
+        e.preventDefault();
+
+        try {
+            if (!name ||!email || !password || !age || !weight) {
+                setError("All fields are required");
+                return;
+            }
+
+            if (isNaN(age) || isNaN(weight)) {
+                setError("Age and weight must be numeric values");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                setError("Passwords do not match");
+                return;
+            }
+
+            const response = await axios.post("http://localhost:3001/auth/register", {
+                name,
+                email,
+                password,
+                age,
+                weight,
+            });
+
+            if (response.status === 200) {
+                console.log(response.data);
+                setMessage("Registration successful");
+                setError('');
+            } else {
+                console.error('Failed to register:', response.status);
+                setError("Registration failed. Please try again.");
+            }
+        } catch (error) {
+            console.error('Error during registration:', error);
+            setError("Registration failed. Please try again.");
+        }
     };
-    const handleLogin=(e)=>{
-        e.preventDefault()
-        axios
-          .post("https://ded-lift.onrender.com/login", { email, password })
-          .then((res) => {
-            localStorage.setItem("token", res.data.token);
-            if (res.data.Status === "Success") {
-              navigate("/");
-              
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+
+        try {
+            if (!email || !password) {
+                setError("Email and password are required");
+                return;
             }
-            else{
-              console.log(res);
+
+            const response = await axios.post("http://localhost:3001/auth/login", {
+                email,
+                password,
+            });
+
+            if (response.status === 200) {
+                localStorage.setItem("token", response.data.token);
+                if (response.data.Status === "Success") {
+                    navigate("/");
+                } else {
+                    console.error('Failed to login:', response.data);
+                    setError("Login failed. Please try again.");
+                }
+            } else {
+                console.error('Failed to login:', response.status);
+                setError("Login failed. Please try again.");
             }
-          })
-          .catch((err) => console.log(err));
-    }
-   const handleGoogleLoginSuccess = (credentialResponse) => {
-     console.log(credentialResponse);
+        } catch (error) {
+            console.error('Error during login:', error);
+            setError("Login failed. Please try again.");
+        }
+    };
 
-     // Extract user information from the JWT token
-     const decodedToken = jwtDecode(credentialResponse?.credential);
+    const handleGoogleLoginSuccess = (credentialResponse) => {
+        console.log(credentialResponse);
 
-     if (decodedToken) {
-       const { name, email } = decodedToken;
+        const decodedToken = jwtDecode(credentialResponse.credential);
 
-       // You can now use 'name' and 'email' in your application
-       // Update or set the 'token' cookie with the received token
-       const token = credentialResponse?.tokenId;
-       localStorage.setItem("token", token);
+        if (decodedToken) {
+            const { name, email } = decodedToken;
+            const token = credentialResponse.credential;
+            localStorage.setItem("token", token);
+            localStorage.setItem("profileData", JSON.stringify({ name, email }));
+            navigate("/");
+        } else {
+            console.log("Unable to fetch user information from Google login");
+        }
+    };
 
-       // You can perform additional actions or navigate to a different page here if needed
-        localStorage.setItem("profileData", JSON.stringify({ name, email }));
-        navigate("/");
-     } else {
-       console.log("Unable to fetch user information from Google login");
-     }
-   };
-      const handleGoogleLoginError = () => {
+    const handleGoogleLoginError = () => {
         console.log('Login Failed');
-      };
+    };
 
-        return (
-          <div className="lgcontain">
-            <div class="wrapper">
-              <div class="card-switch">
-                <label class="switch">
-                  <input
-                    type="checkbox"
-                    class="toggle2"
-                    checked={isToggled}
-                    onClick={() => setIsToggled(!isToggled)}
-                  />
-                  <span class="slider"></span>
-                  <span class="card-side"></span>
-                </label>
-              </div>
-              <div className={`flip-card__inner ${isToggled ? "flipped" : ""}`}>
-                <div class="flip-card__front">
-                  <div class="title">Log in</div>
-                  <form
-                    class="flip-card__form"
-                    action=""
-                    onSubmit={() => handleLogin}
-                  >
-                    <GoogleLogin
-                      onSuccess={handleGoogleLoginSuccess}
-                      onError={handleGoogleLoginError}
-                    ></GoogleLogin>
-                    <input
-                      class="flip-card__input"
-                      name="email"
-                      placeholder="Email"
-                      type="email"
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <div className="password_field">
-                      <input
-                        class="flip-card__input"
-                        name="password"
-                        placeholder="Password"
-                        type={showPassword ? "text" : "password"}
-                        onChange={(e) => setPassword(e.target.value)}
-                      ></input>
-                      {showPassword ? (
-                        <EyeSlashFill
-                          className="eye-icon"
-                          onClick={() => setShowPassword(!showPassword)}
+    return (
+        <div className="lgcontain">
+            <div className="wrapper">
+                <div className="card-switch">
+                    <label className="switch">
+                        <input
+                            type="checkbox"
+                            className="toggle2"
+                            checked={isToggled}
+                            onChange={() => setIsToggled(!isToggled)}
                         />
-                      ) : (
-                        <EyeFill
-                          className="eye-icon"
-                          onClick={() => setShowPassword(!showPassword)}
-                        />
-                      )}
+                        <span className="slider"></span>
+                        <span className="card-side"></span>
+                    </label>
+                </div>
+                <div className={`flip-card__inner ${isToggled ? "flipped" : ""}`}>
+                    <div className="flip-card__front">
+                        <div className="title">Log in</div>
+                        <form
+                            className="flip-card__form"
+                            onSubmit={handleLogin}
+                        >
+                            <GoogleLogin
+                                onSuccess={handleGoogleLoginSuccess}
+                                onError={handleGoogleLoginError}
+                            />
+                            <input
+                                className="flip-card__input"
+                                name="email"
+                                placeholder="Email"
+                                type="email"
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                            <div className="password_field">
+                                <input
+                                    className="flip-card__input"
+                                    name="password"
+                                    placeholder="Password"
+                                    type={showPassword ? "text" : "password"}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+                                {showPassword ? (
+                                    <EyeSlashFill
+                                        className="eye-icon"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    />
+                                ) : (
+                                    <EyeFill
+                                        className="eye-icon"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    />
+                                )}
+                            </div>
+                            <button className="flip-card__btn">Let's go!</button>
+                        </form>
                     </div>
-                    <button class="flip-card__btn">Let`s go!</button>
-                  </form>
+                    <div className="flip-card__back">
+                        <div className="title">Sign up</div>
+                        <form
+                            className="flip-card__form"
+                            onSubmit={handleSignUp}
+                        >
+                            <input
+                                className="flip-card__input"
+                                placeholder="Name"
+                                type="text"
+                                onChange={(e) => setName(e.target.value)}
+                            />
+                            <input
+                                className="flip-card__input"
+                                placeholder="Email"
+                                type="email"
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                            <input
+                                className="flip-card__input"
+                                name="password"
+                                placeholder="Password"
+                                type="password"
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <input
+                                className="flip-card__input"
+                                name="password"
+                                placeholder="Confirm Password"
+                                type="password"
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                            />
+                            <input
+                                className="flip-card__input"
+                                placeholder="Age"
+                                type="number"
+                                onChange={(e) => setAge(e.target.value)}
+                            />
+                            <input
+                                className="flip-card__input"
+                                placeholder="Weight"
+                                type="number"
+                                onChange={(e) => setWeight(e.target.value)}
+                            />
+                            {error && <p style={{ color: 'red' }}>{error}</p>}
+                            {message && <p style={{ color: 'green' }}>{message}</p>}
+                            <button type="submit" className="flip-card__btn">
+                                Confirm!
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <div class="flip-card__back">
-                  <div class="title">Sign up</div>
-                  <form
-                    class="flip-card__form"
-                    action=""
-                    onSubmit={handleSignUp}
-                  >
-                    <input
-                      class="flip-card__input"
-                      placeholder="Name"
-                      type="text"
-                      onChange={(e) => setName(e.target.value)}
-                    />
-                     <input
-                      class="flip-card__input"
-                      placeholder="User Name"
-                      type="text"
-                      onChange={(e) => setuserName(e.target.value)}
-                    />
-                    <input
-                      class="flip-card__input"
-                      name="password"
-                      placeholder="Password"
-                      type="password"
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <input
-                      class="flip-card__input"
-                      name="password"
-                      placeholder="Confirm Password"
-                      type="password"
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                    />
-                    <input
-                      class="flip-card__input"
-                      placeholder="Age"
-                      type="number"
-                      onChange={(e) => setAge(e.target.value)}
-                    />
-                    <input
-                      class="flip-card__input"
-                      placeholder="Weight"
-                      type="number"
-                      onChange={(e) => setWeight(e.target.value)}
-                    />
-                    {error && <p style={{ color: 'red' }}>{error}</p>}
-                    {message && <p style={{ color: 'green' }}>{message}</p>}
-                    <button type="submit" class="flip-card__btn">
-                      Confirm!
-                    </button>
-                  </form>
-                </div>
-              </div>
             </div>
-          </div>
-        );
+        </div>
+    );
 }
