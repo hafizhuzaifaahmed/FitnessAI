@@ -1,63 +1,76 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f4f4f9;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
 
-body {
-    font-family: 'Arial, sans-serif';
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .container {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  }
-  
-  h2 {
-    color: #333;
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 2em;
-    font-weight: bold;
-  }
-  
-  p {
-    font-size: 1.1em;
-    color: #555;
-    line-height: 1.6;
-    margin: 10px 0;
-  }
-  
-  .p-no-data {
-    text-align: center;
-    font-size: 1.2em;
-    color: #999;
-  }
-  
-  
-  .plan-item {
-    margin: 10px 0;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .plan-item:last-child {
-    border-bottom: none;
-  }
-  
-    @media (max-width: 600px) {
-    .container {
-      padding: 15px;
-    }
-  
-    h2 {
-      font-size: 1.5em;
-    }
-  
-    p {
-      font-size: 1em;
-    }
-  }
-  
+h2 {
+  text-align: center;
+  color: #333;
+}
+
+.plan-item {
+  margin-bottom: 30px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: medium;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.plan-item p {
+  margin: 0;
+  color: #555;
+}
+
+.exercise-item {
+  margin-bottom: 20px;
+  display: block;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.exercise-item p {
+  flex: 1;
+  margin-bottom: 15px;
+  padding: 10px;
+  color: #333;
+  font-weight: bold;
+  background-color: #91c3f8;
+  border:solid 2px black;
+  border-radius: 4px;
+}
+
+.exercise-item img {
+  flex: 1;
+  max-width: 300px;
+  max-height: 300px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.exercise-item button {
+  flex: 1;
+  padding: 10px 20px;
+  color: #fff;
+  background: #007bff;
+  border: none;
+  border-radius: 5px;
+  margin-left: 100px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.exercise-item button:hover {
+  background: #0056b3;
+}
+
+img {
+  display:flex;
+  margin: 10px 0;
+  border-radius: 10px;
+}

@@ -59,6 +59,9 @@ const GeneratePlan = () => {
               <option value="arms" label="Arms" />
               <option value="legs" label="Legs" />
               <option value="core" label="Core" />
+              <option value="chest" label="chest" />
+              <option value="back" label="back" />
+              <option value="shoulder" label="shoulder" />
             </select>
           </label>
           {errors.targetMuscles && (

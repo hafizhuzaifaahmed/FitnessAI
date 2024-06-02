@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Make sure to install axios using npm install axios
+import axios from 'axios';
 import './youtube.css';
 
 const FitnessVideos = ({ term, isOpen }) => {
@@ -30,25 +30,24 @@ const FitnessVideos = ({ term, isOpen }) => {
 
     fetchData();
   }, [term]);
-
   return (
     <div className={`content ${isOpen ? 'shifted' : ''}`}>
-    <div className="videos-container">
-      {videos.map((video) => (
-        <div key={video.id.videoId} className="video-item">
-          <div className="video-wrapper">
-            <iframe
-              className="video-frame"
-              src={`https://www.youtube.com/embed/${video.id.videoId}`}
-              allowFullScreen
-              title={video.snippet.title}
-            ></iframe>
-            <p className="video-title">{video.snippet.title}</p>
+      <div className="videos-container">
+        {videos.map((video) => (
+          <div key={video.id.videoId} className="video-item">
+            <div className="video-wrapper">
+              <iframe
+                className="video-frame"
+                src={`https://www.youtube.com/embed/${video.id.videoId}`}
+                allowFullScreen
+                title={video.snippet.title}
+              ></iframe>
+              <p className="video-title">{video.snippet.title}</p>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
-    </div>  
   );
 };
 

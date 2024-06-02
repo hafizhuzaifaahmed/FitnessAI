@@ -1,91 +1,73 @@
 import React, { useState, useEffect } from "react";
 import "./profile.css";
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 const Profile = () => {
-  const navigate = useNavigate();
+  const navigate= useNavigate();
   const [name, setName] = useState('');
-  const [userName, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [age, setAge] = useState('');
-  const [weight, setWeight] = useState('');
 
   const [editMode, setEditMode] = useState(false);
-  const [preset, setPreset] = useState({
-    pre1: '#000',
-    pre2: '#fff'
-  });
+  const [preset,setPreset] = useState({
+    pre1:'#000',
+    pre2:'#fff'
+});
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+useEffect(() => {
+  const storedData = localStorage.getItem("profileData");
+  const token = localStorage.getItem("token");
 
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://localhost:3001/user/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        const userData = response.data;
-
-        if (userData) {
-          setName(userData.name);
-          setUsername(userData.userName);
-          setEmail(userData.email);
-          setAge(userData.age);
-          setWeight(userData.weight);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        "https://ded-lift.onrender.com/user/profile",{
+        headers: {
+          Authorization: `Bearer ${token}`
         }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
       }
-    };
+      );
+      const userData = response.data;
 
-    fetchData();
-  }, []);
+      if (userData.name && userData.email) {
+        setName(userData.name);
+        setEmail(userData.email);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+    if(storedData){
+        const { name: storedName, email: storedEmail } = JSON.parse(storedData);
+        setName(storedName);
+        setEmail(storedEmail);
 
+    }
+  };
+
+  fetchData();
+}, []);
   const handleEditClick = () => {
     setEditMode(true);
   };
 
-  const handleConfirmClick = async () => {
-    const token = localStorage.getItem("token");
-
-    try {
-      const updatedData = {
-        name,
-        userName,
-        email,
-        age,
-        weight
-      };
-
-      await axios.put("http://localhost:3001/user/profile", updatedData, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-      setEditMode(false);
-    } catch (error) {
-      console.error("Error updating user data:", error);
-    }
-  };
-
-  const handleResetClick = () => {
+  const handleConfirmClick = () => {
+    // Add logic to handle confirmation
     setEditMode(false);
   };
 
-  const handleDark = () => {
-    setPreset((prevPreset) => ({
-      pre1: prevPreset.pre2,
-      pre2: prevPreset.pre1,
-    }));
+  const handleResetClick = () => {
+    // Add logic to handle reset
+    setEditMode(false);
   };
-
+ const handleDark = () => {
+   setPreset((prevPreset) => ({
+     pre1: prevPreset.pre2,
+     pre2: prevPreset.pre1,
+   }));
+ };
   return (
-    <div className="card-prof" style={{ background: preset.pre2 }}>
-      <div className="card__img">
+    <div class="card-prof" style={{ background: preset.pre2 }}>
+      <div class="card__img">
         <svg width="100%" xmlns="http://www.w3.org/2000/svg">
           <rect fill="#ffffff"></rect>
           <defs>
@@ -120,7 +102,10 @@ const Profile = () => {
                 <polygon points="630 150 720 0 540 0" fill="#DDD"></polygon>
                 <polygon points="810 150 720 300 900 300" fill="#444"></polygon>
                 <polygon points="810 150 900 0 720 0" fill="#FFF"></polygon>
-                <polygon points="990 150 900 300 1080 300" fill="#DDD"></polygon>
+                <polygon
+                  points="990 150 900 300 1080 300"
+                  fill="#DDD"
+                ></polygon>
                 <polygon points="990 150 1080 0 900 0" fill="#444"></polygon>
                 <polygon points="90 450 0 600 180 600" fill="#DDD"></polygon>
                 <polygon points="90 450 180 300 0 300"></polygon>
@@ -132,8 +117,14 @@ const Profile = () => {
                 <polygon points="630 450 720 300 540 300" fill="#FFF"></polygon>
                 <polygon points="810 450 720 600 900 600"></polygon>
                 <polygon points="810 450 900 300 720 300" fill="#DDD"></polygon>
-                <polygon points="990 450 900 600 1080 600" fill="#AAA"></polygon>
-                <polygon points="990 450 1080 300 900 300" fill="#444"></polygon>
+                <polygon
+                  points="990 450 900 600 1080 600"
+                  fill="#AAA"
+                ></polygon>
+                <polygon
+                  points="990 450 1080 300 900 300"
+                  fill="#444"
+                ></polygon>
                 <polygon points="90 750 0 900 180 900" fill="#222"></polygon>
                 <polygon points="270 750 180 900 360 900"></polygon>
                 <polygon points="270 750 360 600 180 600" fill="#DDD"></polygon>
@@ -142,7 +133,10 @@ const Profile = () => {
                 <polygon points="630 750 720 600 540 600" fill="#444"></polygon>
                 <polygon points="810 750 720 900 900 900" fill="#AAA"></polygon>
                 <polygon points="810 750 900 600 720 600" fill="#666"></polygon>
-                <polygon points="990 750 900 900 1080 900" fill="#999"></polygon>
+                <polygon
+                  points="990 750 900 900 1080 900"
+                  fill="#999"
+                ></polygon>
                 <polygon points="180 0 90 150 270 150" fill="#999"></polygon>
                 <polygon points="360 0 270 150 450 150" fill="#444"></polygon>
                 <polygon points="540 0 450 150 630 150" fill="#FFF"></polygon>
@@ -198,103 +192,111 @@ const Profile = () => {
           <rect height="100%" width="100%" fill="url(#a)" y="0" x="0"></rect>
           <rect height="100%" width="100%" fill="url(#b)" y="0" x="0"></rect>
         </svg>
-        <button className="moon3" onClick={() => navigate('/')} style={{ background: preset.pre2 }}>
+        <button className="moon3" onClick={()=>navigate('/')} style={{background:preset.pre2}}>
           <svg
-            className="svgIcon"
+            class="svgIcon"
             viewBox="0 0 104 100"
             fill="#fff"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              fill="#fff"
+            fill="#fff"
               d="M100.5 40.75V96.5H66V68.5V65H62.5H43H39.5V68.5V96.5H3.5V40.75L52 4.375L100.5 40.75Z"
               stroke="black"
-              strokeWidth="7"
+              stroke-width="7"
             ></path>
           </svg>
         </button>
-        <div className="container-check moon">
+        <div class="container-check moon">
           <input id="checkbox" name="checkbox" type="checkbox" />
-          <label className="label-1" htmlFor="checkbox" onClick={handleDark}></label>
+          <label class="label-1" for="checkbox" onClick={handleDark}></label>
         </div>
-        <div className="card__avatar"></div>
+        <div class="card__avatar"></div>
       </div>
       <div className="card-day12">
-        <label htmlFor="name_field" className="input_label top-field">
-          Name
-        </label>
-        <input
-          id="name_field"
-          className="input_field"
-          type="text"
-          name="input-name"
-          title="Name"
-          style={{ color: preset.pre1 }}
-          disabled={!editMode}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-
-        <label htmlFor="username_field" className="input_label">
+        <label for="password_field" class="input_label top-field">
           Username
         </label>
         <input
-          id="username_field"
-          className="input_field"
+          id="password_field"
+          class="input_field "
           type="text"
-          name="input-username"
-          title="Username"
+          name="input-name"
+          title="Inpit title"
           style={{ color: preset.pre1 }}
           disabled={!editMode}
-          value={userName}
-          onChange={(e) => setUsername(e.target.value)}
+          value={name}
         />
 
-        <label htmlFor="email_field" className="input_label">
+        <label for="password_field" class="input_label">
           Email
         </label>
         <input
-          id="email_field"
-          className="input_field"
+          id="password_field"
+          class="input_field"
           type="text"
-          name="input-email"
-          title="Email"
+          name="input-name"
+          title="Inpit title"
           style={{ color: preset.pre1 }}
           disabled={!editMode}
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
         />
 
-        <label htmlFor="age_field" className="input_label">
-          Age
+        <label for="password_field" class="input_label">
+          Password
         </label>
         <input
-          id="age_field"
-          className="input_field"
-          type="number"
-          name="input-age"
-          title="Age"
+          id="password_field"
+          class="input_field"
+          type="text"
+          name="input-name"
+          title="Inpit title"
           style={{ color: preset.pre1 }}
+          placeholder="Enter your full name"
           disabled={!editMode}
-          value={age}
-          onChange={(e) => setAge(e.target.value)}
         />
 
-        <label htmlFor="weight_field" className="input_label">
-          Weight
+        <label for="password_field" class="input_label">
+          Card holder full name
         </label>
         <input
-          id="weight_field"
-          className="input_field"
-          type="number"
-          name="input-weight"
-          title="Weight"
+          id="password_field"
+          class="input_field"
+          type="text"
+          name="input-name"
+          title="Inpit title"
           style={{ color: preset.pre1 }}
+          placeholder="Enter your full name"
           disabled={!editMode}
-          value={weight}
-          onChange={(e) => setWeight(e.target.value)}
         />
 
+        <label for="password_field" class="input_label">
+          Card holder full name
+        </label>
+        <input
+          id="password_field"
+          class="input_field"
+          type="text"
+          name="input-name"
+          title="Inpit title"
+          style={{ color: preset.pre1 }}
+          placeholder="Enter your full name"
+          disabled={!editMode}
+        />
+
+        <label for="password_field" class="input_label">
+          Card holder full name
+        </label>
+        <input
+          id="password_field"
+          class="input_field"
+          type="text"
+          name="input-name"
+          title="Inpit title"
+          style={{ color: preset.pre1 }}
+          placeholder="Enter your full name"
+          disabled={!editMode}
+        />
         {editMode ? (
           <>
             <input
