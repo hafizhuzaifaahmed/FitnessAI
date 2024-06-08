@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import Logo from '../Assets/dead_lift.png';
 import './nav.css';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Sidebar from '../Sidebar/SideBar';
+
 
 //shadow p-3 mb-5 bg-body rounded 
 const NavBar = ({ isOpen, isAuthenticated, handleLogout }) => {
@@ -41,8 +41,11 @@ const NavBar = ({ isOpen, isAuthenticated, handleLogout }) => {
               <div className='plan-heading'>
               <Link to="/generatePlan">Generate Plan</Link>
               </div>
-              <div className='price-heading'> 
-              <Link to="#pricing">Pricing</Link>
+              <div className='yourPlan-heading'> 
+              <Link to="/yourPlan">My Plan</Link>
+              </div>
+              <div className='help-heading'> 
+              <Link to="/help">Help</Link>
               </div>
               
             </Nav>

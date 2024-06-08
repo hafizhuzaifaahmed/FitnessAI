@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './AppBar.css';
-import { HouseDoorFill, EnvelopeFill, PersonFill, BoxArrowDownRight, DoorOpenFill } from 'react-bootstrap-icons';
+import { PersonWalking,GearFill,HouseDoorFill, List, PersonFill, BoxArrowDownRight, DoorOpenFill } from 'react-bootstrap-icons';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -16,11 +16,21 @@ const AppBar = ({ isAuthenticated, handleLogout }) => {
       setActiveItem('1');
     } else if (location.pathname === '/dashpage') {
       setActiveItem('2');
-    } else if (location.pathname === '/profile') {
+    } 
+    else if (location.pathname === '/profile') {
       setActiveItem('3');
-    } else if (location.pathname === '/login') {
+    }
+    else if (location.pathname === '/generatePlan') 
+    {
       setActiveItem('4');
     }
+    else if (location.pathname === '/yourPlan') {
+      setActiveItem('5');
+    }
+    else if (location.pathname === '/login') {
+      setActiveItem('6');
+    }
+    
     else{
       setActiveItem('2');
     }
@@ -51,7 +61,7 @@ const AppBar = ({ isAuthenticated, handleLogout }) => {
         onClick={() => handleItemClick('/dashpage')}
       >
         <div className="mobile-bottom-nav__item-content">
-          <EnvelopeFill />
+          <List />
           <span>Pages</span>
         </div>
       </div>
@@ -59,6 +69,7 @@ const AppBar = ({ isAuthenticated, handleLogout }) => {
         className={`mobile-bottom-nav__item ${activeItem === '3' ? 'mobile-bottom-nav__item--active' : ''}`}
         onClick={() => handleItemClick('/profile')}
       >
+        
         <div className="mobile-bottom-nav__item-content">
           <PersonFill />
           <span>Profile</span>
@@ -66,6 +77,25 @@ const AppBar = ({ isAuthenticated, handleLogout }) => {
       </div>
       <div
         className={`mobile-bottom-nav__item ${activeItem === '4' ? 'mobile-bottom-nav__item--active' : ''}`}
+        onClick={() => handleItemClick('/generatePlan')}
+      >
+        <div className="mobile-bottom-nav__item-content">
+          <GearFill />
+          <span>Generate Plan</span>
+        </div>
+      </div>
+      <div
+        className={`mobile-bottom-nav__item ${activeItem === '5' ? 'mobile-bottom-nav__item--active' : ''}`}
+        onClick={() => handleItemClick('/yourPlan')}
+      >
+        <div className="mobile-bottom-nav__item-content">
+          <PersonWalking />
+          <span>My Plan</span>
+        </div>
+      </div>
+      
+      <div
+        className={`mobile-bottom-nav__item ${activeItem === '6' ? 'mobile-bottom-nav__item--active' : ''}`}
         onClick={() => handleItemClick('/login')}
       >
         {!isAuthenticated ? (

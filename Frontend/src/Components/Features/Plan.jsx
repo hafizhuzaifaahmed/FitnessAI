@@ -1,5 +1,5 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Plan.css';
 import squats from '../images/exercises/squats.gif';
 import lunges from '../images/exercises/lunges.gif';
@@ -22,134 +22,160 @@ import general_fitness_back from '../images/tips/general_fitness_back.webp';
 import muscle_gain_back from '../images/tips/muscle_gain_back.jpg';
 
 const exerciseCategories = {
-  'legs': [
+  legs: [
     { name: 'squats', gif: squats },
     { name: 'lunges', gif: lunges },
-    { name: 'jumping_jacks', gif: jumping_jacks }
+    { name: 'jumping_jacks', gif: jumping_jacks },
   ],
-  'arms': [
+  arms: [
     { name: 'bicep_curls', gif: bicep_curls },
-    { name: 'tricep_extensions', gif: tricep_extensions }
+    { name: 'tricep_extensions', gif: tricep_extensions },
   ],
-  'core': [ 
-    { name: 'situps', gif: situps }
-  ],
-  'chest': [
-    { name: 'pushups', gif: pushups }
-  ],
-  'back': [
-    { name: 'dumbbell_rows', gif: dumbbell_rows }
-  ],
-  'shoulders': [
+  core: [{ name: 'situps', gif: situps }],
+  chest: [{ name: 'pushups', gif: pushups }],
+  back: [{ name: 'dumbbell_rows', gif: dumbbell_rows }],
+  shoulders: [
     { name: 'dumbbell_shoulder_press', gif: dumbbell_shoulder_press },
-    { name: 'lateral_shoulder_raises', gif: lateral_shoulder_raises }
-  ]
+    { name: 'lateral_shoulder_raises', gif: lateral_shoulder_raises },
+  ],
 };
 
 const tipsImages = {
-  'legs': {
+  legs: {
     'weight loss': weight_loss,
     'muscle gain': legs_muscle_gain,
-    'general fitness': general_fitness
+    'general fitness': general_fitness,
   },
-  'arms': {
+  arms: {
     'weight loss': weight_loss,
     'muscle gain': muscle_gain,
-    'general fitness': general_fitness
+    'general fitness': general_fitness,
   },
-  'core': {
+  core: {
     'weight loss': core_weight_loss,
     'muscle gain': muscle_gain,
-    'general fitness': general_fitness2
+    'general fitness': general_fitness2,
   },
-  'chest': {
+  chest: {
     'weight loss': core_weight_loss,
     'muscle gain': legs_muscle_gain,
-    'general fitness': general_fitness2
+    'general fitness': general_fitness2,
   },
-  'back': {
+  back: {
     'weight loss': weight_loss,
     'muscle gain': muscle_gain_back,
-    'general fitness': general_fitness_back
+    'general fitness': general_fitness_back,
   },
-  'shoulders': {
+  shoulders: {
     'weight loss': weight_loss,
     'muscle gain': muscle_gain,
-    'general fitness': general_fitness2
-  }
+    'general fitness': general_fitness2,
+  },
 };
 
-const Plan = () => {
+const Plan = ({isOpen}) => {
   const location = useLocation();
   const { values } = location.state || {};
+  const navigate = useNavigate();
+  const [plans, setPlans] = useState(() => {
+    const savedPlans = localStorage.getItem('plans');
+    return savedPlans ? JSON.parse(savedPlans) : generatePlan(values);
+  });
 
-  const generatePlan = (values) => {
-    let exercises = [];
-    let tips = '';
-
-    if (exerciseCategories[values.targetMuscles]) {
-      exercises = exerciseCategories[values.targetMuscles];
-    } else {
-      exercises = [{ name: 'Unknown target muscles', gif: '' }];
+  useEffect(() => {
+    if (!values) {
+      return;
     }
-
-    switch (values.goal) {
-      case 'weight loss':
-        tips = 'Cardio (running, cycling, swimming), High-Intensity Interval Training (HIIT), Consistent Caloric Deficit';
-        break;
-      case 'muscle gain':
-        tips = 'Strength training (heavy lifting, compound movements), High-protein diet (chicken, fish, beans), Sufficient Caloric Surplus, Adequate Rest and Recovery';
-        break;
-      case 'general fitness':
-        tips = 'Mixed workouts (combination of strength, cardio, flexibility), Balanced diet (fruits, vegetables, lean proteins), Consistency and Variety in Workouts';
-        break;
-      default:
-        tips = 'Unknown goal';
-    }
-
-    return {
-      ...values,
-      exercises,
-      tips,
-    };
-  };
+    const initialPlans = generatePlan(values);
+    setPlans(initialPlans);
+    localStorage.setItem('plans', JSON.stringify(initialPlans));
+  }, [values]);
 
   if (!values) {
     return <p className="p-no-data">No data provided</p>;
   }
 
-  const plan = generatePlan(values);
+  function generatePlan(values) {
+    return values.dayMuscles.map((day, index) => {
+      const exercises = exerciseCategories[day.targetMuscle] || [
+        { name: 'Unknown target muscle', gif: '' },
+      ];
 
-  const tipImage = tipsImages[plan.targetMuscles]?.[plan.goal] || '/images/tips/default.jpg';
-  
+      const tips = {
+        'weight loss':
+          'Cardio (running, cycling, swimming), High-Intensity Interval Training (HIIT), Consistent Caloric Deficit',
+        'muscle gain':
+          'Strength training (heavy lifting, compound movements), High-protein diet (chicken, fish, beans), Sufficient Caloric Surplus, Adequate Rest and Recovery',
+        'general fitness':
+          'Mixed workouts (combination of strength, cardio, flexibility), Balanced diet (fruits, vegetables, lean proteins), Consistency and Variety in Workouts',
+      }[values.goal] || 'Unknown goal';
+
+      const tipImage =
+        tipsImages[day.targetMuscle]?.[values.goal] || '/images/tips/default.jpg';
+
+      return {
+        ...day,
+        day: index + 1,
+        exercises,
+        tips,
+        tipImage,
+      };
+    });
+  }
+
+  const handleCompleteDay = (index) => {
+    const remainingPlans = plans.filter((_, idx) => idx !== index);
+    setPlans(remainingPlans);
+    localStorage.setItem('plans', JSON.stringify(remainingPlans));
+  };
+
   const handleTryExercise = (exerciseName) => {
     console.log(`Try out the exercise: ${exerciseName}`);
   };
+
   return (
+    <div  className={`content ${isOpen ? 'shifted' : ''}`}>
     <div className="container">
       <h2>Your Fitness Plan</h2>
       <div className="plan-item">
-        <p><b>Target Muscles:</b> {plan.targetMuscles}</p>
+        <p><b>Goal:</b> {values.goal}</p>
       </div>
-      <div className="plan-item">
-        <p><b>Goal:</b> {plan.goal}</p>
-      </div>
-      <div className="plan-item">
-      <p><b>Suggested Exercises:</b></p>
-        {plan.exercises.map((exercise, index) => (
-          <div key={index} className="exercise-item">
-            <p>{exercise.name}</p>
-            {exercise.gif && <img src={exercise.gif} alt={exercise.name} style={{ width: '300px', height: '300px' }} />}
-            <div>
-            <button  onClick={() => handleTryExercise(exercise.name)}>Try it out</button>
-            </div>
+      {plans.map((plan, index) => (
+        <div key={index} className="plan-day">
+          <h3>Day {plan.day}</h3>
+          <div className="plan-item">
+            <p><b>Target Muscles:</b> {plan.targetMuscle}</p>
           </div>
-        ))}
-      </div>
-      <div className="plan-item">
-        <p><b>Some Tips:</b> {plan.tips}</p>
-        <img src={tipImage} alt="Tips" style={{ width: '200px', height: '200px' }} />
-      </div>
+          <div className="plan-item">
+            <p><b>Suggested Exercises:</b></p>
+            {plan.exercises.map((exercise, idx) => (
+              <div key={idx} className="exercise-item">
+                <p>{exercise.name}</p>
+                {exercise.gif && (
+                  <img
+                    src={exercise.gif}
+                    alt={exercise.name}
+                    style={{ width: '300px', height: '300px' }}
+                  />
+                )}
+                <button onClick={() => handleTryExercise(exercise.name)}>
+                  Try it out
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="plan-item">
+            <p><b>Some Tips:</b> {plan.tips}</p>
+            <img
+              src={plan.tipImage}
+              alt="Tips"
+              style={{ width: '200px', height: '200px' }}
+            />
+          </div>
+          <button className="complete-button" onClick={() => handleCompleteDay(index)}>Mark as Complete</button>
+        </div>
+      ))}
+    </div>
     </div>
   );
 };

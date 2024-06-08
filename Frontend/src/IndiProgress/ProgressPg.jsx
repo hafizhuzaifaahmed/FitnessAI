@@ -38,10 +38,7 @@ export default function ProgressPg() {
           handleLogout={handleLogout}
         />
         <Progress isOpen={isOpen} />
-        <AppBar
-          isAuthenticated={isAuthenticated}
-          handleLogout={handleLogout}
-        ></AppBar>
+        
       </>
     );
 }
