@@ -3,6 +3,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const path = require("path");
 
 const app = express();
 
@@ -24,5 +25,11 @@ mongoose
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+
+//production script
+app.use(express.static("./Frontend/build"));
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "Frontend", "build", "index.html"));
+});
 
 module.exports = app;

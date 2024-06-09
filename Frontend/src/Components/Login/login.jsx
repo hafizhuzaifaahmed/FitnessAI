@@ -38,7 +38,7 @@ export default function Login() {
                 return;
             }
 
-            const response = await axios.post("http://localhost:3001/auth/register", {
+            const response = await axios.post("http://ded-lift.azurewebsites.net/auth/register", {
                 name,
                 email,
                 password,
@@ -69,7 +69,7 @@ export default function Login() {
                 return;
             }
 
-            const response = await axios.post("http://localhost:3001/auth/login", {
+            const response = await axios.post("http://ded-lift.azurewebsites.net/auth/login", {
                 email,
                 password,
             });
