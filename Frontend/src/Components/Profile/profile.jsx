@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 const Profile = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
-  const [userName, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [age, setAge] = useState('');
   const [weight, setWeight] = useState('');
@@ -31,7 +30,6 @@ const Profile = () => {
 
         if (userData) {
           setName(userData.name);
-          setUsername(userData.userName);
           setEmail(userData.email);
           setAge(userData.age);
           setWeight(userData.weight);
@@ -54,7 +52,6 @@ const Profile = () => {
     try {
       const updatedData = {
         name,
-        userName,
         email,
         age,
         weight
@@ -110,7 +107,7 @@ const Profile = () => {
               id="b"
               patternUnits="userSpaceOnUse"
             >
-              <g fillOpacity="0.5">
+              <g fill-opacity="0.5">
                 <polygon points="90 150 0 300 180 300" fill="#444"></polygon>
                 <polygon points="90 150 180 0 0 0"></polygon>
                 <polygon points="270 150 360 0 180 0" fill="#AAA"></polygon>
@@ -233,21 +230,6 @@ const Profile = () => {
           disabled={!editMode}
           value={name}
           onChange={(e) => setName(e.target.value)}
-        />
-
-        <label htmlFor="username_field" className="input_label">
-          Username
-        </label>
-        <input
-          id="username_field"
-          className="input_field"
-          type="text"
-          name="input-username"
-          title="Username"
-          style={{ color: preset.pre1 }}
-          disabled={!editMode}
-          value={userName}
-          onChange={(e) => setUsername(e.target.value)}
         />
 
         <label htmlFor="email_field" className="input_label">

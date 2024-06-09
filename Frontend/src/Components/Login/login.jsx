@@ -4,15 +4,13 @@ import { useState } from 'react';
 import axios from 'axios';
 import { GoogleLogin } from '@react-oauth/google';
 import { EyeFill, EyeSlashFill } from 'react-bootstrap-icons';
-import { jwtDecode } from 'jwt-decode'; // Use named import
-import Sidebar from '../Sidebar/SideBar';
+import {jwtDecode} from "jwt-decode";
 
 export default function Login() {
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [age, setAge] = useState('');
     const [weight, setWeight] = useState('');
-    const [userName, setUserName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -25,7 +23,7 @@ export default function Login() {
         e.preventDefault();
 
         try {
-            if (!name || !userName || !email || !password || !age || !weight) {
+            if (!name ||!email || !password || !age || !weight) {
                 setError("All fields are required");
                 return;
             }
@@ -42,7 +40,6 @@ export default function Login() {
 
             const response = await axios.post("http://localhost:3001/auth/register", {
                 name,
-                userName,
                 email,
                 password,
                 age,
@@ -98,18 +95,16 @@ export default function Login() {
     const handleGoogleLoginSuccess = (credentialResponse) => {
         console.log(credentialResponse);
 
-        try {
-            const decodedToken = jwtDecode(credentialResponse?.credential);
-            if (decodedToken) {
-                const { name, email } = decodedToken;
-                localStorage.setItem("token", credentialResponse.credential);
-                localStorage.setItem("profileData", JSON.stringify({ name, email }));
-                navigate("/");
-            } else {
-                console.log("Unable to fetch user information from Google login");
-            }
-        } catch (error) {
-            console.log("Error decoding token: ", error);
+        const decodedToken = jwtDecode(credentialResponse.credential);
+
+        if (decodedToken) {
+            const { name, email } = decodedToken;
+            const token = credentialResponse.credential;
+            localStorage.setItem("token", token);
+            localStorage.setItem("profileData", JSON.stringify({ name, email }));
+            navigate("/");
+        } else {
+            console.log("Unable to fetch user information from Google login");
         }
     };
 
@@ -184,12 +179,6 @@ export default function Login() {
                                 placeholder="Name"
                                 type="text"
                                 onChange={(e) => setName(e.target.value)}
-                            />
-                            <input
-                                className="flip-card__input"
-                                placeholder="User Name"
-                                type="text"
-                                onChange={(e) => setUserName(e.target.value)}
                             />
                             <input
                                 className="flip-card__input"
