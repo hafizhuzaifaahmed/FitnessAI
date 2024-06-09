@@ -1,3 +1,6 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and deploy Node.js app to Azure Web App - DED-LIFT
 
 on:
@@ -16,11 +19,10 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'
+          node-version: '18.x'
 
       - name: npm install, build, and test
         run: |
-          cd FitnessAI/Server
           npm install
           npm run build --if-present
           npm run test --if-present
@@ -29,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: FitnessAI/Server
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
@@ -38,21 +40,20 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write # This is required for requesting the JWT
+      id-token: write #This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: node-app
-          path: FitnessAI/Server
       
       - name: Login to Azure
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1B708BFDD6FD427ABA4390805CE347BE }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_2D8E203FDC33479FB3A7D0EA3792D80B }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D6D4C830749E44D9AD4C11094727CD5F }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_6B3E0DFFD0C94FFE9A1F498082B583DA }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_DACA7D0E1C4743C1A3C54C09F8355871 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FBD0B660B7DC42CEAF5DD8CE7F60C02C }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
@@ -60,4 +61,5 @@ jobs:
         with:
           app-name: 'DED-LIFT'
           slot-name: 'Production'
-          package: FitnessAI/Server
+          package: .
+          
